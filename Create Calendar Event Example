@@ -1,0 +1,23 @@
+from exchangelib import DELEGATE, IMPERSONATION, Account, Credentials, ServiceAccount, \
+    EWSDateTime, EWSTimeZone, Configuration, NTLM, CalendarItem, Message, \
+    Mailbox, Attendee, Q, ExtendedProperty, FileAttachment, ItemAttachment, \
+    HTMLBody, Build, Version
+
+credentials = Credentials(username='admin@123.com', password='g00dpassw0rd')
+
+myaccount = Account(primary_smtp_address='admin@123.com', credentials=credentials,
+                  autodiscover=True, access_type=DELEGATE)
+
+tz = EWSTimeZone.timezone('Europe/Copenhagen')
+
+item = CalendarItem(account=myaccount, 
+                    folder=myaccount.calendar,  # account & folder required. 
+                    subject='foo',
+                    start = tz.localize(EWSDateTime(2017, 6, 3)), # start & end required
+                    end=tz.localize(EWSDateTime(2017, 6, 4)))
+
+item.save()  # This gives the item an item_id and a changekey
+item.subject = 'bar'
+item.save()  # When the items has an item_id, this will update the item
+
+print(item.subject)
